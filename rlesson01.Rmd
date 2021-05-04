@@ -1,0 +1,117 @@
+---
+title: "Lecture 1: Esimating Probability using Simulations"
+output: 
+  learnr::tutorial:
+    css: css/styles.css
+runtime: shiny_prerendered
+---
+
+<!-- 
+Before running the document, make sure `learnr` package is available. 
+If missing, you can install the package with `install.packages('learnr').
+-->
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Simulating Relative Frequency
+
+Recall, one interpretation of _probability_ is long-term relative frequency. Suppose you repeat a random experiment a large number of time, say $N$, and observe $n$ number of event $A$ The relative frequency 
+$$\frac{n}{N}$$ 
+is approximately the probability $P(A)$.
+
+### Example: Rolling a Fair Die 
+
+
+Recall the single die example with
+$$A=\text{You role an even number}$$
+and
+$$B=\text{You role a number less than 3}$$
+
+We can simulate a single role with.
+
+```{r singlerole, exercise=TRUE, exercise.lines=3}
+
+sample(x = 1:6, size = 1)
+
+```
+
+To simulate $N$ times, we can use a for loop.
+
+```{r echo=TRUE}
+N <- 10
+draw <- numeric(N)
+for(i in 1:N) {
+  draw[i] <- sample(1:6, 1)
+}
+print(draw)
+```
+
+Alternatively, we can ask `sample` to simulate $N$ times at once.
+
+```{r echo=TRUE}
+N <- 15
+# replace must be set to TRUE to allow simulating a single value multiple times
+draw <- sample(1:6, N, replace = TRUE) 
+print(draw)
+```
+
+### Computing $P(A)$
+
+In order to compute $P(A)$, we will count the relative frequency of simulated values that are even. We also want to use a large $N$.
+
+```{r calcpa, exercise=TRUE, exercise.lines=10}
+N <- 10^6 # simulate one million times
+draw <- sample(1:6, N, replace = TRUE)
+
+
+```
+
+
+### Practice: Computing $P(B)$
+
+Estimate $P(B)$ based on 100,000 simulations.
+
+```{r calcpb, exercise=TRUE, exercise.lines=10}
+
+
+```
+
+
+## Multiple Experiments
+
+Suppose you roll a fair die twice. Let $C$ be the event the sum of the two rolls is greater than or equal to 8.
+
+### Compute by Simulation
+
+```{r calcpc, exercise=TRUE, exercise.lines=10}
+N <- 10^6
+# replicate outputs result of `n` repetitions of 
+# the operations described in `expr`
+C <- replicate( 
+  n = N, expr = {
+    # roll a die twice
+    roll <- sample(1:6, size = 2, replace = TRUE) 
+    # output whether the sum is greater than or equal to 8
+    sum(roll) >=8
+  })
+sum(C)/N
+```
+
+### Compute by Counting
+
+Compute $P(C)$ by counting. Does the theoretical values match the simulated estimate?
+
+_Hint: When the first roll is 1, the sum cannot be greater than or equal to 8. When the first roll is 2, the sum is greater than or equal to 8 when the second roll is 6. How many outcomes satisfy the event $C$ when the first roll is 3?_
+
+
+## Simulating the Monty Hall Dillema
+
+Can you simulate the Monty Hall problem? Assume the participant always select the first door initially then switch to the other available after Monty (the host) reveals a goat. 
+
+```{r montyhall, exercise=TRUE, exercise.lines=50}
+
+```
