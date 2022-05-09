@@ -9,6 +9,8 @@ runtime: shiny_prerendered
 <!-- 
 Before running the document, make sure `learnr` package is available. 
 If missing, you can install the package with `install.packages('learnr').
+
+http://jupyter.utoronto.ca/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fsta237%2Frlesson01&urlpath=shiny%2Frlesson01%2Frlesson01.Rmd&branch=main
 -->
 
 ```{r setup, include=FALSE}
@@ -107,11 +109,3 @@ Compute $P(C)$ by counting. Does the theoretical values match the simulated esti
 
 _Hint: When the first roll is 1, the sum cannot be greater than or equal to 8. When the first roll is 2, the sum is greater than or equal to 8 when the second roll is 6. How many outcomes satisfy the event $C$ when the first roll is 3?_
 
-
-## Simulating the Monty Hall Dillema
-
-Can you simulate the Monty Hall problem? Assume the participant always select the first door initially then switch to the other available after Monty (the host) reveals a goat. 
-
-```{r montyhall, exercise=TRUE, exercise.lines=50}
-
-```
