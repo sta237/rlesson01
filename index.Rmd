@@ -14,7 +14,8 @@ http://jupyter.utoronto.ca/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.
 -->
 
 ```{r setup, include=FALSE}
-install.packages("learnr")
+renv::activate(".")
+renv::restore(".")
 library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 ```
