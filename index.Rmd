@@ -2,22 +2,154 @@
 title: "Lecture 1: Esimating Probability using Simulations"
 output: 
   learnr::tutorial:
+    theme: "sandstone"
     css: css/styles.css
 runtime: shiny_prerendered
 ---
 
-<!-- 
-Before running the document, make sure `learnr` package is available. 
-If missing, you can install the package with `install.packages('learnr').
-
-http://jupyter.utoronto.ca/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fsta237%2Frlesson01&urlpath=shiny%2Frlesson01%2Frlesson01.Rmd&branch=main
--->
 
 ```{r setup, include=FALSE}
-renv::activate(".")
-renv::restore(".")
 library(learnr)
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Basic R for the course
+
+#### With R, you can 
+
++ Compute simple arithmetic operations:
+
+```{r rcanadd}
+2 / 5 + (5 - 4) * 1 
+```
+
++  Evaluate logical statements:
+
+```{r rcanlogic}
+5 > 2 && 3 != 5 && 2 == 2
+```
+
++  Simulate and plot data:
+
+```{r rcanplot}
+plot(rnorm(25))
+```
+
+In this class, we will use R to demonstrate probability concepts via simulation.
+
+### Variables and data types
+
+#### You can store values to variables such as 
+
++ numbers:
+
+```{r variables-num}
+my_number <- 5
+my_number
+```
+
++ characters:
+
+```{r variables-char}
+my_characters <- "this is a single sentence."
+my_characters
+```
+
++ logicals:
+
+```{r variables-logic}
+my_logical <- TRUE
+my_logical
+```
+
++ sequences of a single data type called vectors:
+
+```{r vectors}
+my_vector <- c(2, 3, 7)
+my_vector
+```
+
+#### To extract elements from a vector, you can use 
+
++ the positional indices inside `[` starting with 1:
+
+```{r vector-extract}
+my_vector[1]
+my_vector[c(1, 3)]
+```
+
++ a logical vector of the same length to extract elements at `TRUE` positions:
+
+```{r vector-extract-logical}
+my_vector[c(FALSE, FALSE, TRUE)]
+my_vector[c(T, F, T)]
+```
+
+#### You can create empty vectors of length `n` with:
+
+```{r emptyvectors}
+n <- 5
+numeric(n) # numbers
+character(n) # characters
+logical(n) # logicals
+```
+
+
+### Practice
+
+Create a vector that consists of day of your birthday and your first name. Print the vector and comment on its data type.
+
+```{r vectors-ex, exercise=TRUE}
+birth_name <- # create the vector
+```
+
+```{r vectors-ex-solution}
+birth_name <- c(1, "Michael")
+birth_name
+```
+
+### Functions
+
+In R, a function is in the following form:
+
+```
+<function name>(<arg1>, <arg2>, ...)
+```
+
++  You can store the result of a function with `result <- function_x(...)`
+
+```{r function-sum, exercise=TRUE}
+sum_of_237 <- sum(c(2, 3, 7))
+sum_of_237
+```
+
++  You can look at the help page of each function with `?<function name>`.
+
+```{r function-ex, exercise=TRUE, echo=TRUE}
+?sample
+
+```
+
++  There are also a plenty of resources and examples online for most R functions.
+
+### Loops and vectorized calls
+
+To loop through each element in a vector, you may use a "for loop" in R:
+
+```{r forloop}
+x <- c(10, 20, 30, 40, 50)
+y <- c(5, 10, 15, 20, 25)
+z <- numeric(5)
+for (i in c(1, 2, 3, 4, 5)) {
+  z[i] <- x[i] + y[i]
+}
+z
+```
+
+Many R functions automatically broadcast the operation to each element resulting in a vector of same size.
+
+```{r vectorized}
+x + y
 ```
 
 
@@ -31,83 +163,100 @@ is approximately the probability $P(A)$.
 
 
 Recall the single die example with
-$$A=\text{You role an even number}$$
+$$A=\text{You roll an even number}$$
 and
-$$B=\text{You role a number less than 3}$$
+$$B=\text{You roll a number less than 3}$$
 
-We can simulate a single role with.
+We can simulate a single roll with.
 
-```{r singlerole, exercise=TRUE, exercise.lines=3}
-
+```{r singleroll}
 sample(x = 1:6, size = 1)
 
 ```
 
+> `1:6` is a shortcut for `c(1, 2, 3, 4, 5, 6)`.
+
 To simulate $N$ times, we can use a for loop.
 
-```{r echo=TRUE}
-N <- 10
-draw <- numeric(N)
+```{r diceloop, exercise=TRUE, exercise.lines=8}
+N <- 25
+rolls <- numeric(N)
 for(i in 1:N) {
-  draw[i] <- sample(1:6, 1)
+  # simulate a single single roll and save to `rolls` at index `i`
 }
-print(draw)
+rolls
 ```
 
 Alternatively, we can ask `sample` to simulate $N$ times at once.
 
-```{r echo=TRUE}
-N <- 15
-# replace must be set to TRUE to allow simulating a single value multiple times
-draw <- sample(1:6, N, replace = TRUE) 
-print(draw)
+```{r dicevectorized, exercise=TRUE, exercise.lines=5}
+N <- 25
+rolls <- sample(1:6, N) # correct this line appropriately
+rolls
+```
+
+```{r dicevectorized-solution}
+N <- 25
+rolls <- sample(1:6, N, replace = TRUE) 
+# replace = TRUE allows drawing values from 1:6 multiple times
+rolls
 ```
 
 ### Computing $P(A)$
 
-In order to compute $P(A)$, we will count the relative frequency of simulated values that are even. We also want to use a large $N$.
+In order to compute $P(A)$, we will count the relative frequency of simulated values that are even. We also want to use a large $N$. In the code chunk below, `N` is the number of simulated rolls, 1,000, and vector `rolls` contains 1,000 simulated rolls of a fair die. Use the vector to estimate $P(A)$ and print it.
+
+```{r calcpa-setup, echo=FALSE}
+set.seed(237)
+N <- 1000
+rolls <- sample(1:6, N, replace = TRUE)
+```
 
 ```{r calcpa, exercise=TRUE, exercise.lines=10}
-N <- 10^6 # simulate one million times
-draw <- sample(1:6, N, replace = TRUE)
-
+rolls
 
 ```
 
+```{r calcpa-solution}
+sum(rolls %% 2 == 0) / N
+```
+
+```{r calcpa-hint}
+rolls %% 2 # results in a vector containing the remainder after dividing each roll by 2
+```
 
 ### Practice: Computing $P(B)$
 
-Estimate $P(B)$ based on 100,000 simulations.
+Estimate $P(B)$ based on 100,000 simulations without using a for loop.
 
 ```{r calcpb, exercise=TRUE, exercise.lines=10}
 
 
 ```
 
-
-## Multiple Experiments
-
-Suppose you roll a fair die twice. Let $C$ be the event the sum of the two rolls is greater than or equal to 8.
-
-### Compute by Simulation
-
-```{r calcpc, exercise=TRUE, exercise.lines=10}
-N <- 10^6
-# replicate outputs result of `n` repetitions of 
-# the operations described in `expr`
-C <- replicate( 
-  n = N, expr = {
-    # roll a die twice
-    roll <- sample(1:6, size = 2, replace = TRUE) 
-    # output whether the sum is greater than or equal to 8
-    sum(roll) >=8
-  })
-sum(C)/N
+```{r calcpb-solution}
+N <- 100000
+rolls <- sample(1:6, N, replace = TRUE)
+sum(rolls < 3) / N
 ```
 
-### Compute by Counting
+<!-- ## Multiple Experiments -->
 
-Compute $P(C)$ by counting. Does the theoretical values match the simulated estimate?
+<!-- Suppose you roll a fair die twice. Let $E$ be the event the sum of the two rolls is greater than or equal to 8. -->
 
-_Hint: When the first roll is 1, the sum cannot be greater than or equal to 8. When the first roll is 2, the sum is greater than or equal to 8 when the second roll is 6. How many outcomes satisfy the event $C$ when the first roll is 3?_
+<!-- ### Compute by Simulation -->
+
+<!-- ```{r calcpe, exercise=TRUE, exercise.lines=10} -->
+<!-- N <- 10^6 -->
+<!-- # replicate outputs result of `n` repetitions of  -->
+<!-- # the operations described in `expr` -->
+<!-- E <- replicate(  -->
+<!--   n = N, expr = { -->
+<!--     # roll a die twice -->
+<!--     roll <- sample(1:6, size = 2, replace = TRUE)  -->
+<!--     # output whether the sum is greater than or equal to 8 -->
+<!--     sum(roll)  -->
+<!--   }) -->
+<!-- sum(E >= 8)/N -->
+<!-- ``` -->
 
