@@ -9,6 +9,9 @@ runtime: shiny_prerendered
 
 
 ```{r setup, include=FALSE}
+install.packages("learnr", repos = "https://cloud.r-project.org",
+                 dependencies = c("Depends", "Imports"), 
+                 quiet = TRUE)
 library(learnr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
